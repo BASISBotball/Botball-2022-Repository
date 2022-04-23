@@ -3,7 +3,27 @@
 #include <string.h>
 #define M_PI 3.14159265358979323846
 
+void calibrate_gyro()
+{
+  int i = 0;
+  double avg = 0;
+  while(i < 50)
+  {
+    avg += gyro_z();
+    msleep(1);
+    i++;
+  }
+  bias = avg / 50.0;
+  printf("New Bias: %f\n", bias);
+}
 
+void find_angle(){
+  double theta = 0;
+  while(1 == 1){
+    msleep(10);
+    theta += (gyro_z() - bias)*10;
+  }
+}
 
 //dir is 0 for right and 1 for left
 //angle is in degrees
