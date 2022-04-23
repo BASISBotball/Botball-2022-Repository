@@ -1,1 +1,43 @@
+#include <stdio.h>
+#include <kipr/wombat.h>
+#define M_PI 3.14159265358979323846
 
+double bias;
+double theta;
+
+void calibrate_gyro()
+{
+  int i = 0;
+  double avg = 0;
+  while(i < 50)
+  {
+    avg += gyro_z();
+    msleep(1);
+    i++;
+  }
+  bias = avg / 50.0;
+  printf("New Bias: %f\n", bias);
+}
+
+void find_angle(){
+  double theta = 0;
+  while(1 == 1){
+    msleep(10);
+    theta += (gyro_z() - bias)*10;
+  }
+}
+
+
+int main()
+{
+  calibrate_gyro();
+  theta = 0.0;
+  motor(3, 100);
+  while(theta < M_PI/2){
+    msleep(10);
+    theta += fabs(gyro_z() - bias) * 10;
+    printf("theta: %f\n", theta);
+  }
+  motor(3, 0);
+  return 0;
+}
